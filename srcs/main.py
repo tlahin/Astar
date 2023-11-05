@@ -42,7 +42,7 @@ while running:
     pygame.display.flip()
 
     window_data.window.fill('black', pygame.Rect(0, 0, window_data.width, window_data.height))
-    pygame.draw.rect(window_data.window, ('gray'), pygame.Rect(0, window_data.height - 100, window_data.width, 100))
+    pygame.draw.rect(window_data.window, ('red'), pygame.Rect(0, window_data.height - 100, window_data.width, 100))
 
     # Get inputs
     for event in pygame.event.get():
@@ -50,6 +50,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+        # records a click and converts the cordinates into a usable input
         if event.type == pygame.MOUSEBUTTONDOWN:
 
             new_pos = [round(event.pos[0] / window_data.block_width), round(event.pos[1] / window_data.block_height)]
@@ -57,6 +58,7 @@ while running:
                 start_pos = new_pos
             path = Astar.a_star(start_pos, target_pos, blocked, cols, rows)
 
+        # Toggles the path visible with 'T'
         if event.type == pygame.KEYDOWN:
 
             if event.key == pygame.K_t:
@@ -68,10 +70,12 @@ while running:
                 else:
                     window_data.colour = 'black'
 
+    # if there was a error or path was not found
     if path == [-1]:
         print("No path available")
         running = False
 
+    # render the blocks on screen
     else:
 
         # Renders the path from start to target (path is a list of cordinates)

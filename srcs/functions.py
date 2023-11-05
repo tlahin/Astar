@@ -3,6 +3,7 @@ import pygame
 
 import random
 
+# renders an info panel with path length
 def score_board(window_data, path):
 
 	path_len = len(path)
@@ -11,7 +12,7 @@ def score_board(window_data, path):
 	board_font = pygame.font.SysFont('Arial', 50)
 
 	# Content
-	left_surface = board_font.render(f'Length of the path is {path_len} blocks', True, ('white'))
+	left_surface = board_font.render(f'Length of the path is {path_len} blocks', True, ('black'))
 
 	# Board rect
 	left_rect = pygame.Rect(40, 820, 700, 80)
@@ -19,11 +20,13 @@ def score_board(window_data, path):
 	# Draws the rect with the content
 	window_data.window.blit(left_surface, left_rect)
 
+# Returns cordinates
 def get_random_cords(cols, rows):
 
 	cords = [random.randint(0, cols - 1), random.randint(0, rows - 1)]
 	return (cords)
 
+# Returns cordinates that do not overlap with blocked items
 def non_blocked_cords(rows, cols, blocked):
 
 	cords = [random.randint(0, cols - 1), random.randint(0, rows - 1)]
@@ -31,6 +34,7 @@ def non_blocked_cords(rows, cols, blocked):
 		cords = [random.randint(0, cols - 1), random.randint(0, rows - 1)]
 	return cords
 
+# Prints the arena with the start, end and path included to the terminal
 def print_end(arena, path):
 
 	print()
@@ -42,6 +46,7 @@ def print_end(arena, path):
 		print()
 	print()
 
+# Prints the arena with start and end point highlighted to the terminal
 def print_arena(arena):
 
 	print()
@@ -51,16 +56,7 @@ def print_arena(arena):
 		print()
 	print()
 
-def print_list(list):
-	
-	for cell in list:
-		print(cell.pos)
-	print()
-
-def get_f(g, h):
-
-	return g + h
-
+# Finds a cell from a list with the lowest 'q' value
 def get_q(list):
 
 	lowest_q = list[0]
@@ -69,6 +65,7 @@ def get_q(list):
 			lowest_q = cell
 	return cell
 
+# returns a distance between start and target cordinates
 def get_distance(start, target):
 
 	distance = abs(start[0] - target[0]) + abs(start[1] - target[1])
@@ -76,16 +73,18 @@ def get_distance(start, target):
 		distance *= -1
 	return distance
 
+# Initializes start cell
 def init_start(arena, start, target):
 
 	start_cell = arena[start[0]][start[1]]
 
 	start_cell.h = get_distance(start, target)
 	start_cell.g = 0
-	start_cell.f = get_f(start_cell.g, start_cell.h)
+	start_cell.f = start_cell.g + start_cell.h
 	start_cell.pos = start
 	start_cell.visited = True
 
+# Initializes cell
 def init_cell(arena, parent, start, target, pos, blocked):
 
 	cell = arena[pos[0]][pos[1]]
@@ -93,11 +92,12 @@ def init_cell(arena, parent, start, target, pos, blocked):
 	cell.pos = pos
 	cell.g = get_distance(start, cell.pos)
 	cell.h = get_distance(cell.pos, target)
-	cell.f = get_f(cell.g, cell.h)
+	cell.f = cell.g + cell.h
 	if cell.pos in blocked:
 		cell.blocked == True
 	return cell
 
+# returns a path (list of cordinates)
 def get_path(cell, start, target):
 
 	path = []
@@ -108,6 +108,7 @@ def get_path(cell, start, target):
 	path.append(target)
 	return path
 
+# checks that a cell has valid cordinates and is not overlapping with a blocked cell
 def is_valid_cell(blocked, arena, cell):
 
 	cols = len(arena[0])
@@ -118,6 +119,7 @@ def is_valid_cell(blocked, arena, cell):
 	else:
 		return -1
 
+# checks if given cell is to be put in the open_list (returns 1 if the cell was put in opne_list, -1 if not)
 def check_f_in_list(open_list, closed_list, cell):
 
 	for open_cell in open_list:
@@ -137,6 +139,8 @@ def check_f_in_list(open_list, closed_list, cell):
 				return 1
 	return -1
 
+# Checks if the successor is valid, if its the target, if its visited, initializes it and checks the 'f' value. 
+# Returns 0 if target found, 1 if search continues else returns -1
 def get_successor(open_list, closed_list, arena, cell, start, target, blocked, direction):
 
 	if is_valid_cell(blocked, arena, direction) == 1:
@@ -148,6 +152,7 @@ def get_successor(open_list, closed_list, arena, cell, start, target, blocked, d
 			return ret
 	return -1
 
+# creates up to 4 successors for a given cell
 def get_successors(open_list, closed_list, arena, cell, start, target, blocked):
 
 	north = [cell.pos[0], cell.pos[1] - 1]
@@ -162,6 +167,7 @@ def get_successors(open_list, closed_list, arena, cell, start, target, blocked):
 		ret = get_successor(open_list, closed_list, arena, cell, start, target, blocked, direction)
 	return ret
 
+# Creates blocked blocks and their cordinates
 def spawn_blocks(window_data, start, target, free):
 
 	blocked = []
