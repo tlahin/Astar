@@ -55,10 +55,10 @@ while running:
             running = False
 
         if event.type == pygame.MOUSEBUTTONDOWN:
+
             new_pos = [round(event.pos[0] / window_data.block_width), round(event.pos[1] / window_data.block_height)]
             if new_pos[0] < cols and new_pos[0] >= 0 and new_pos[1] < rows and new_pos[1] >= 0:
                 start_pos = new_pos
-            print(start_pos)
             path = Astar.a_star(start_pos, target_pos, blocked, cols, rows)
 
         if event.type == pygame.KEYDOWN:
