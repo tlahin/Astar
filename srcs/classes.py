@@ -9,7 +9,7 @@ class create_window():
         self.height = height
         self.window = pygame.display.set_mode((width, height))
         self.block_width = width / cols
-        self.block_height = height / rows
+        self.block_height = (height - 100) / rows
         self.colour = colour
         self.cols = cols
         self.rows = rows

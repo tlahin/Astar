@@ -9,10 +9,10 @@ pygame.init()
 
 pygame.display.set_caption("Astar demo by tlahin")
 
-cols, rows = (100, 100)
+cols, rows = (80, 80)
 random_pos = True
 
-window_data = classes.create_window(900, 900, cols, rows, 'black')
+window_data = classes.create_window(800, 900, cols, rows, 'black')
 
 if random_pos:
 
@@ -22,11 +22,6 @@ if random_pos:
     while target_pos == start_pos:
 
         target_pos = functions.get_random_cords(cols, rows)
-
-else:
-
-    start_pos = [1, 1]
-    target_pos = [cols - 1, rows - 1]
 
 path = []
 free = []
@@ -47,6 +42,7 @@ while running:
     pygame.display.flip()
 
     window_data.window.fill('black', pygame.Rect(0, 0, window_data.width, window_data.height))
+    pygame.draw.rect(window_data.window, ('gray'), pygame.Rect(0, window_data.height - 100, window_data.width, 100))
 
     # Get inputs
     for event in pygame.event.get():
@@ -57,7 +53,7 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN:
 
             new_pos = [round(event.pos[0] / window_data.block_width), round(event.pos[1] / window_data.block_height)]
-            if new_pos[0] < cols and new_pos[0] >= 0 and new_pos[1] < rows and new_pos[1] >= 0:
+            if new_pos[0] < rows and new_pos[0] >= 0 and new_pos[1] < cols and new_pos[1] >= 0 and new_pos not in blocked:
                 start_pos = new_pos
             path = Astar.a_star(start_pos, target_pos, blocked, cols, rows)
 
@@ -71,7 +67,6 @@ while running:
                     window_data.colour = 'green'
                 else:
                     window_data.colour = 'black'
-    #print(path)
 
     if path == [-1]:
         print("No path available")
@@ -92,3 +87,5 @@ while running:
         # Renders blocked cells
         for cell in blocked:
             pygame.draw.rect(window_data.window, 'red', pygame.Rect(cell[0] * window_data.block_width, cell[1] * window_data.block_height, window_data.block_width, window_data.block_height))
+        
+        functions.score_board(window_data, path)

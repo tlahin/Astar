@@ -1,5 +1,23 @@
 
+import pygame
+
 import random
+
+def score_board(window_data, path):
+
+	path_len = len(path)
+
+	# Text font
+	board_font = pygame.font.SysFont('Arial', 50)
+
+	# Content
+	left_surface = board_font.render(f'Length of the path is {path_len} blocks', True, ('white'))
+
+	# Board rect
+	left_rect = pygame.Rect(40, 820, 700, 80)
+
+	# Draws the rect with the content
+	window_data.window.blit(left_surface, left_rect)
 
 def get_random_cords(cols, rows):
 
